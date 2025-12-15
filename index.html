@@ -3,19 +3,361 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Para ti</title>
+  <title>Uma carta para ti</title>
+  <meta name="theme-color" content="#0b0b12" />
   <style>
-    body { font-family: system-ui; margin: 24px; line-height: 1.4; }
-    .card { max-width: 520px; margin: 0 auto; padding: 18px; border: 1px solid #ddd; border-radius: 14px; }
-    h1 { margin-top: 0; }
+    :root{
+      --bg1:#0b0b12;
+      --bg2:#17102a;
+      --paper:#fff7ee;
+      --ink:#1b1b1b;
+      --accent:#ff4d8d;
+      --shadow: 0 18px 60px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      min-height:100svh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: #f6f6ff;
+      background:
+        radial-gradient(900px 600px at 20% 20%, rgba(255,77,141,.18), transparent 55%),
+        radial-gradient(800px 500px at 80% 30%, rgba(139,92,246,.16), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      display:grid;
+      place-items:center;
+      padding: 18px;
+    }
+
+    .wrap{
+      width:min(980px, 100%);
+      display:grid;
+      gap: 16px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      opacity:.95;
+    }
+    .brand{
+      font-weight:700;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      user-select:none;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--accent);
+      box-shadow: 0 0 18px rgba(255,77,141,.6);
+    }
+    .hint{
+      font-size: 13px;
+      opacity:.8;
+    }
+
+    .stage{
+      display:grid;
+      place-items:center;
+      padding: 14px;
+    }
+
+    /* Envelope */
+    .envelope{
+      position: relative;
+      width: min(520px, 96vw);
+      aspect-ratio: 16/11;
+      filter: drop-shadow(var(--shadow));
+      transform: translateZ(0);
+    }
+
+    .env-back{
+      position:absolute; inset:0;
+      background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: var(--radius);
+      overflow:hidden;
+    }
+
+    .env-back::before{
+      content:"";
+      position:absolute; inset:-60px -60px auto auto;
+      width:180px; height:180px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,77,141,.45), transparent 55%);
+      transform: rotate(25deg);
+      opacity:.7;
+    }
+
+    .flap{
+      position:absolute; left:0; right:0; top:0;
+      height: 55%;
+      transform-origin: top center;
+      background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.08));
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      border-top-left-radius: var(--radius);
+      border-top-right-radius: var(--radius);
+      transition: transform 900ms cubic-bezier(.2,.9,.2,1);
+      border-top: 1px solid rgba(255,255,255,.18);
+    }
+
+    .seal{
+      position:absolute;
+      left:50%; top: 46%;
+      transform: translate(-50%,-50%);
+      width: 56px; height: 56px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, #ff82b0, var(--accent));
+      box-shadow: 0 10px 25px rgba(255,77,141,.35);
+      display:grid;
+      place-items:center;
+      border: 1px solid rgba(255,255,255,.22);
+    }
+    .seal span{
+      font-size: 18px;
+      color: rgba(20,10,18,.9);
+      font-weight: 900;
+    }
+
+    /* Letter (paper) */
+    .letter{
+      position:absolute;
+      left: 7%; right: 7%;
+      bottom: 7%;
+      height: 78%;
+      background: linear-gradient(180deg, rgba(255,255,255,.98), var(--paper));
+      border-radius: 16px;
+      color: var(--ink);
+      overflow:hidden;
+      transform: translateY(42%);
+      transition:
+        transform 1100ms cubic-bezier(.2,.9,.2,1),
+        opacity 600ms ease;
+      opacity: .0;
+      border: 1px solid rgba(0,0,0,.06);
+    }
+
+    .letter-inner{
+      height:100%;
+      display:grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 10px;
+      padding: 18px 18px 14px;
+    }
+
+    .title{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+    }
+    .title h1{
+      margin:0;
+      font-size: 18px;
+      letter-spacing:.2px;
+    }
+    .date{
+      font-size: 12px;
+      opacity:.55;
+      white-space:nowrap;
+    }
+
+    .divider{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(0,0,0,.12), transparent);
+    }
+
+    .message{
+      font-size: 15px;
+      line-height: 1.55;
+    }
+    .message p{ margin: 0 0 10px; }
+
+    .gallery{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .photo{
+      position:relative;
+      border-radius: 14px;
+      overflow:hidden;
+      background: #eee;
+      border: 1px solid rgba(0,0,0,.08);
+      box-shadow: 0 10px 22px rgba(0,0,0,.10);
+      aspect-ratio: 4/5;
+      transform: translateY(8px);
+      opacity: 0;
+      transition: all 700ms ease;
+    }
+    .photo img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+    }
+    .photo::after{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,.18));
+      opacity:.55;
+    }
+
+    .footer{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      font-size: 13px;
+      opacity:.7;
+    }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      justify-content:center;
+      margin-top: 14px;
+    }
+    button{
+      appearance:none;
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(255,255,255,.10);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-weight: 650;
+      cursor:pointer;
+      transition: transform 140ms ease, background 200ms ease, border-color 200ms ease;
+      backdrop-filter: blur(10px);
+    }
+    button:hover{ transform: translateY(-1px); background: rgba(255,255,255,.14); }
+    button:active{ transform: translateY(0px) scale(.99); }
+
+    .primary{
+      background: linear-gradient(180deg, rgba(255,77,141,.92), rgba(255,77,141,.72));
+      border-color: rgba(255,255,255,.26);
+      box-shadow: 0 14px 30px rgba(255,77,141,.22);
+    }
+
+    /* OPEN STATE */
+    .open .flap{ transform: rotateX(180deg); }
+    .open .letter{
+      transform: translateY(-8%);
+      opacity: 1;
+    }
+    .open .seal{ opacity: 0; transform: translate(-50%,-50%) scale(.92); transition: 400ms ease; }
+
+    .open .photo{
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .open .photo:nth-child(1){ transition-delay: 200ms; }
+    .open .photo:nth-child(2){ transition-delay: 320ms; }
+    .open .photo:nth-child(3){ transition-delay: 440ms; }
+
+    /* Mobile */
+    @media (max-width: 520px){
+      .gallery{ grid-template-columns: repeat(2, 1fr); }
+      .photo{ aspect-ratio: 1/1.1; }
+      .title h1{ font-size: 16px; }
+      .message{ font-size: 14px; }
+    }
   </style>
 </head>
+
 <body>
-  <div class="card">
-    <h1>Olá ❤️</h1>
-    <p>Fiz este site para ti.</p>
-    <p id="msg"></p>
-    <button onclick="document.getElementById('msg').textContent='Amo-te.'">Clica aqui</button>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand"><span class="dot"></span>Uma carta para ti</div>
+      <div class="hint">Toca em “Abrir a carta”.</div>
+    </div>
+
+    <div class="stage">
+      <div class="envelope" id="envelope" aria-live="polite">
+        <div class="env-back"></div>
+        <div class="flap" aria-hidden="true"></div>
+
+        <div class="seal" aria-hidden="true"><span>❤</span></div>
+
+        <article class="letter" aria-label="Carta">
+          <div class="letter-inner">
+            <div class="title">
+              <h1>Minha vida,</h1>
+              <div class="date" id="date"></div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="message">
+              <!-- EDITA ESTE TEXTO -->
+              <p>
+                Eu só queria deixar isto aqui guardado: gosto de ti de um jeito calmo e forte,
+                e cada dia contigo faz o mundo parecer mais certo.
+              </p>
+              <p>
+                Obrigado por existires na minha vida. Eu escolho-te hoje, e vou continuar a escolher-te.
+              </p>
+
+              <!-- GALERIA: mete as vossas fotos na pasta "fotos/" e atualiza os nomes abaixo -->
+              <div class="gallery" aria-label="Fotos nossas">
+                <div class="photo"><img src="fotos/01.jpg" alt="Foto nossa 1"></div>
+                <div class="photo"><img src="fotos/02.jpg" alt="Foto nossa 2"></div>
+                <div class="photo"><img src="fotos/03.jpg" alt="Foto nossa 3"></div>
+              </div>
+            </div>
+
+            <div class="footer">
+              <div>Com amor,</div>
+              <div><strong>— Diego</strong></div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="actions">
+        <button class="primary" id="openBtn">Abrir a carta</button>
+        <button id="closeBtn" style="display:none;">Fechar</button>
+      </div>
+    </div>
   </div>
+
+  <script>
+    const env = document.getElementById("envelope");
+    const openBtn = document.getElementById("openBtn");
+    const closeBtn = document.getElementById("closeBtn");
+
+    // data discreta
+    const d = new Date();
+    document.getElementById("date").textContent =
+      d.toLocaleDateString("pt-PT", { day:"2-digit", month:"long", year:"numeric" });
+
+    function openLetter(){
+      env.classList.add("open");
+      openBtn.style.display = "none";
+      closeBtn.style.display = "inline-block";
+    }
+
+    function closeLetter(){
+      env.classList.remove("open");
+      closeBtn.style.display = "none";
+      openBtn.style.display = "inline-block";
+    }
+
+    openBtn.addEventListener("click", openLetter);
+    closeBtn.addEventListener("click", closeLetter);
+
+    // abre ao tocar na carta também
+    env.addEventListener("click", (e) => {
+      // evita fechar/abrir quando clica no botão
+      if (e.target.closest("button")) return;
+      if (!env.classList.contains("open")) openLetter();
+    });
+  </script>
 </body>
 </html>
